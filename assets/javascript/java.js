@@ -1,119 +1,123 @@
 
-//A list of the players on my son's hockey team
-var teamList = ["jd", "kyler", "wyatt", "tyler", "parker", "zack", "jennah", "jacob", "preston", "paul",
-                "robby", "steven", "jaden", "ky", "colin", "caden", "aiden", "john", "corban", "miles", "trevor",
-                "adam"];
-
-//the computer chooses one of the names of the players                
+//Global Variables
+//-------------------------------------------------------
+//Arrays and Variables
+var playersList = ["gretzky", "lemieux", "orr", "crosby", "lidstrom", "selanne", "mcdavid", "roy", "brodeur", "chara", "bergeron", "ovechkin",
+"toews", "domi", "messier", "fuhr", "flurry"];
 var chosenWord = "";
-
-//the computer parses ou the letters in the chosen player's name
-var lettersInChosenWord = [];
-
-//store the number of blanks needed for each word
+var lettersInWord = [];
 var numBlanks = 0;
-
-//number of blanks the user guesses right
-var blanksAndSuccesses = [];
-
-//number of letters user guesses wrong
+var blanksSuccesses = [];
 var wrongGuesses = [];
 
-//stores the letters guessed
-var lettersGuessed = "";
+//Game Counters
+var wins = 0;
+var losses = 0; 
+var guessesLeft = 9;
 
+//Functions
+//-------------------------------------------------------
 
-//setting up the counters of wins, losses and number of guesses remaining
-var winCounter = 0;
-var lossCounter = 0;
-var numGuesses = 9;
+function startGame () {
+    chosenWord = playersList[Math.floor(Math.random() * playersList.length)];
+    lettersInWord = chosenWord.split("");
+    numBlanks = lettersInWord.length;
 
+      //Reset
+      guessesLeft = 9;
+      wrongGuesses = []; 
+      blanksSuccesses = [];
 
-function startGame() {
-    //count down from number of guesses
-    numGuesses = 9;
-    //computer randomly selects from list of players
-    chosenWord = teamList[Math.floor(Math.random() * teamList.length)];
-    //splits the name chosen into individual letters
-    lettersInChosenWord = chosenWord.split("");
-    //set the number of blanks to match the name chosen
-    numBlanks = lettersInChosenWord.length;
-
-    console.log(chosenWord);
-
-    blanksAndSuccesses = [];
-
-    wrongGuesses = [];
-
-    for(var i = 0; i < numBlanks; i++) {
-        //push the "blanks" to be seen on the browser
-        blanksAndSuccesses.push("_");
+    //Populate blanksSuccesses
+    for (var i = 0; i < numBlanks; i++) {
+        blanksSuccesses.push("_");
     }
 
-    console.log(blanksAndSuccesses);
+    //change HTML to reflect actual word picked
+    document.getElementById("wordToGuess").innerHTML = blanksSuccesses.join(" ");
+    document.getElementById("guessesLeft").innerHTML = guessesLeft;
+    document.getElementById("numwins").innerHTML = wins;
+    document.getElementById("numLosses").innerHTML = losses;
 
-    document.getElementById("guesses-left").innerHTML = numGuesses;
-    document.getElementById("word-blanks").innerHTML = blanksAndSuccesses.join(" ");
-    document.getElementById("wrong-guesses").innerHTML = wrongGuesses.join(" ");
+    //testing
+    console.log(chosenWord);
+    console.log(lettersInWord);
+    console.log(numBlanks);
+    console.log(blanksSuccesses);
+  
 }
 
-//set how to match the letters or how to say you got the wrong one
 function checkLetters(letter) {
-    var letterInWord = false;
+  //check to see if letter exists in the word
+    
+    var isLetterInWord = false;
 
-    for (var i = 0; i < numBlanks; i++) {
-        if (chosenWord[i] === letter) {
-            letterInWord = true;
+    for (var i = 0; i < numBlanks; i++){
+        if (chosenWord[i] == letter) {
+            isLetterInWord = true;
         }
     }
 
-    if (letterInWord) {
-        for (var j = 0; j < numBlanks; i++) {
-            if (chosenWord[j] === letter) {
-                blanksAndSuccesses[j] = letter;
+    //determine where the letter is in the word and populate blanksSuccesses
+    if (isLetterInWord) {
+        for (var i = 0; i < numBlanks; i++) {
+            if (chosenWord[i] == letter) {
+                blanksSuccesses[i] = letter;
             }
         }
-        console.log(blanksAndSuccesses);
     }
-
-
+    //When letter is not found
     else {
         wrongGuesses.push(letter);
-        numGuesses--;
+        guessesLeft--
     }
-}
+    //Testing and Debugging
+    console.log(blanksSuccesses);
+
+};
 
 function roundComplete() {
-    console.log("WinCount: " + winCounter + " | LossCount: " + lossCounter + " | NumGuesses: " + numGuesses);
+    console.log("Win Count: " + wins + " | Loss Count: " + losses + " | Guesses Left " + guessesLeft);
 
-    //get ready to post wins and losses
-    document.getElementById("guesses-left").innerHTML = numGuesses;
-    document.getElementById("word-blanks").innerHTML = blanksAndSuccesses.join(" ");
-    document.getElementById("wrong-guesses").innerHTML = wrongGuesses.join(" ");
+    //Update the HTML
+    document.getElementById("guessesLeft").innerHTML = guessesLeft;
+    document.getElementById("wordToGuess").innerHTML = blanksSuccesses.join(" ");
+    document.getElementById("wrongGuesses").innerHTML = wrongGuesses.join(" ");
 
-    //if user wins, say "You Win!"
-    if (lettersInChosenWord.toString() === blanksAndSuccesses.toString()) {
-        winCounter++;
-        alert("You Win!");
-        //add one to the win
-        document.getElementById("win-counter").innerHTML = winCounter;
+
+    //Check if user won
+    if (lettersInWord.toString() == blanksSuccesses.toString()) {
+        wins++;
+        alert("You won! The name was " + chosenWord);
+
+        //Update win counter
+        document.getElementById("numwins").innerHTML = wins;
         startGame();
     }
-    //If they don't win, say "You Lose!"
-    else if(numGuesses === 0) {
-        lossCounter++;
-        alert("You Lose!");
-        //add one to the loss
-        document.getElementById("losses-counter").innerHTML = lossCounter;
+    //Check if user lost
+    else if (guessesLeft == 0) {
+
+        losses;
+        alert("You lost! The correct name was " + chosenWord);
+
+        //Update losses counter
+        document.getElementById("numLosses").innerHTML = losses;
+
         startGame();
     }
+    
 }
-
-//run the start of game function 
+    
+//Main Process
+//-------------------------------------------------------
+//Initiates the code for the first time
 startGame();
 
+//Register key clicks
 document.onkeyup = function(event) {
-    lettersGuessed = String.fromCharCode(event.which).toLowerCase();
-    checkLetters(lettersGuessed);
-    roundComplete();
-};
+    var letterGuessed = String.fromCharCode(event.keyCode).toLowerCase();
+   checkLetters(letterGuessed);
+   roundComplete();
+    //test
+    console.log(letterGuessed);
+}
